@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Windows/Doors Fraction Converter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 480px;
+        }
+    </style>
+</head>
+<body class="py-3">
+
+<div class="container">
+    <h4 class="text-center mb-3">Windows/Doors Fraction Converter</h4>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="mainTabs">
+        <li class="nav-item flex-fill">
+            <button class="nav-link active w-100" data-bs-toggle="tab" data-bs-target="#tab1" type="button">
+                Number → Fraction
+            </button>
+        </li>
+        <li class="nav-item flex-fill">
+            <button class="nav-link w-100" data-bs-toggle="tab" data-bs-target="#tab2" type="button">
+                Windows + Mark
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content pt-3">
+
+        <!-- Tab 1 -->
+        <div id="tab1" class="tab-pane fade show active">
+            <div class="card card-body shadow-sm">
+                <label class="form-label">Number</label>
+                <input type="number" id="numberInput" class="form-control mb-2" placeholder="Ex: 25.37" step="0.01">
+                <button class="btn btn-primary w-100" onclick="convertNumber()">Convert</button>
+                <div id="result1" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Tab 2 -->
+        <div id="tab2" class="tab-pane fade">
+            <div class="card card-body shadow-sm">
+                <label class="form-label">Window width</label>
+                <input type="number" id="windowWidth" class="form-control mb-2" placeholder="Ex: 40" step="0.01">
+
+                <label class="form-label">Frame size</label>
+                <input type="number" id="frameWidth" class="form-control mb-2" placeholder="Ex: 1.25" step="0.01">
+
+                <button class="btn btn-success w-100 mt-2" onclick="convertWindow()">Convert</button>
+                <div id="result2" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getFraction(number = 0) {
+        number = Math.round(number * 10000) / 10000;
+        const fractions = ["1/16", "1/8", "3/16", "1/4", "5/16", "3/8", "7/16", "1/2",
+            "9/16", "5/8", "11/16", "3/4", "13/16", "7/8", "15/16"];
+        const _32 = 0.0313, _16 = 0.0625;
+        let aux = _32;
+
+        if (number - Math.floor(number) < _32) {
+            return `${Math.floor(number)}"`;
+        } else {
+            aux += _32;
+            for (let f of fractions) {
+                if (number - Math.floor(number) <= aux + _32) {
+                    return `${Math.floor(number)} ${f}"`;
+                }
+                aux += _16;
+            }
+        }
+        return `${Math.ceil(number)}"`;
+    }
+
+    function convertNumber() {
+        const val = parseFloat(document.getElementById('numberInput').value);
+        const result1 = document.getElementById('result1');
+        if (isNaN(val)) {
+            result1.innerHTML = `<div class="alert alert-danger">❌ Enter a valid number</div>`;
+            return;
+        }
+        result1.innerHTML = `<div class="alert alert-success">Result: <strong>${getFraction(val)}</strong></div>`;
+    }
+
+    function convertWindow() {
+        const width = parseFloat(document.getElementById('windowWidth').value);
+        const frame = parseFloat(document.getElementById('frameWidth').value);
+        const result2 = document.getElementById('result2');
+
+        if (isNaN(width) || isNaN(frame)) {
+            result2.innerHTML = `<div class="alert alert-danger">❌ Enter valid values</div>`;
+            return;
+        }
+
+        const final = width + frame;
+        if (final < 0) {
+            result2.innerHTML = `<div class="alert alert-warning">⚠️ Frame is larger than window width!</div>`;
+            return;
+        }
+
+        result2.innerHTML = `<div class="alert alert-success">Result: <strong>${getFraction(final)}</strong></div>`;
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
